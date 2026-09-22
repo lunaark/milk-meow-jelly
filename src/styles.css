@@ -47,3 +47,23 @@ footer{position:absolute;bottom:24px;left:3.7%;right:3.7%;z-index:2;font-size:7p
  #mobile-reset{background:#efe3d3}
  .discover-controls{font-size:12px}
 }
+
+/* Mobile-only visual controls; desktop retains its existing layout. */
+.play-icon,.mobile-method-title{display:none}
+@media(max-width:1280px){
+ .intro{top:64px}.intro h1{font-size:52px;line-height:.9}.intro p{font-size:10px;margin-top:14px}
+ .desktop-method-title{display:none}.mobile-method-title{display:inline;font-weight:700}
+ .play-icon{display:block;width:30px;height:30px;margin:0 auto 5px;flex-shrink:0}
+ .controls .tools button{padding:10px 5px}.controls .tools button[aria-pressed=true]{padding:9px 4px}
+ .controls .tools button strong{font-size:13px}.controls .tools button small{margin-top:4px}
+ .flavors{justify-content:center;gap:20px;margin:4px 0 18px}
+ .controls .flavors button{flex:0 1 72px;display:flex;flex-direction:column;gap:7px;border:0;border-radius:12px;background:transparent!important;padding:6px;font-size:11px;min-height:70px}
+ .controls .flavors i{position:relative;width:38px;height:38px;border-radius:50%;border:1px solid #b8a48a70;box-shadow:0 2px 5px #63412e10;background:#fff6dc}
+ .controls .flavors [data-flavor=berry] i{background:#dfa0aa}.controls .flavors [data-flavor=matcha] i{background:#a9bd86}
+ .controls .flavors button[aria-pressed=true] i{outline:2px solid #8c603e;outline-offset:4px}
+ .controls .flavors button[aria-pressed=true] i::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:#63412e;font-size:18px}
+ .mobile-playbar button{display:grid;grid-template-columns:30px auto;align-content:center;justify-content:center;column-gap:7px;min-height:58px}
+ .mobile-playbar .play-icon{grid-row:1/3;align-self:center;margin:0;width:28px;height:28px}
+ .mobile-playbar button strong{font-size:13px}.mobile-playbar button small{font-size:9px;margin-top:4px}
+}
+@media(max-width:350px){.mobile-playbar button{column-gap:3px;grid-template-columns:24px auto}.mobile-playbar .play-icon{width:24px;height:24px}.mobile-playbar button strong{font-size:12px}.mobile-playbar button small{font-size:8px}}
