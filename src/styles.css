@@ -33,3 +33,17 @@ footer{position:absolute;bottom:24px;left:3.7%;right:3.7%;z-index:2;font-size:7p
 .controls input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fffaf3;border:3px solid #a36a3f;box-shadow:0 2px 5px #63412e30}.controls input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fffaf3;border:3px solid #a36a3f;box-shadow:0 2px 5px #63412e30}
 .range-ends{display:flex;justify-content:space-between;color:#897968;font-size:10px;margin:-2px 0 12px}.squish{margin-top:12px;min-height:44px;background:#efe3d3;color:#63412e;border:1px solid #d6bea2}.squish:hover{background:#e5d3ba}.actions{margin-top:8px;margin-bottom:12px}.actions button{min-height:44px}.toggles{margin-bottom:10px}.toggles label,.toggles button{min-height:36px}.toggles button{padding:6px 10px}.discover-controls{display:none}
 @media(max-width:1280px){.controls{width:calc(100% - 32px);max-width:420px;max-height:none;overflow:visible;padding:20px;margin-bottom:36px}.discover-controls{display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;margin-top:12px;pointer-events:auto;text-decoration:none;background:#a36a3f;color:#fffaf3;border-radius:22px;font-size:13px}.caption .readings{margin-top:16px}.controls .tools button{min-height:72px}.controls .flavors button{min-height:44px}.toggles label,.toggles button{min-height:44px}}
+
+/* Keep mode switching and recovery within reach while touching the cat. */
+.mobile-playbar{display:none}
+@media(max-width:1280px){
+ #app{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+ .mobile-playbar{display:block;position:fixed;z-index:7;bottom:0;left:0;right:0;padding:9px 12px calc(10px + env(safe-area-inset-bottom,0px));background:#fffaf3f5;border-top:1px solid #d8cbb9;box-shadow:0 -4px 20px #63412e0c}
+ .mobile-playbar p{font-size:11px;line-height:18px;text-align:center;margin:0 0 7px;color:#795b42;min-height:18px}
+ .mobile-playbar>div{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:480px;margin:auto}
+ .mobile-playbar button{min-height:56px;border:1px solid #d8cbb9;background:#fffaf3;border-radius:12px;padding:7px 2px;color:#63412e}
+ .mobile-playbar button strong{display:block;font-size:14px}.mobile-playbar button small{display:block;margin-top:4px;font-size:10px}
+ .mobile-playbar button[aria-pressed=true]{background:#a36a3f;border-color:#a36a3f;color:#fffaf3}
+ #mobile-reset{background:#efe3d3}
+ .discover-controls{font-size:12px}
+}

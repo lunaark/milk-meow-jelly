@@ -17,7 +17,7 @@ let squishUntil=0;
 let last=0,lastRead=0,selectedFlavor:Flavor='vanilla',disposed=false;
 let benchmark:{start:number;frames:number[];cpu:number[];lastNudge:number}|null=null;
 const status=element('#gpu-status'),message=element('#scene-message');
-const enableControls=(enabled:boolean)=>document.querySelectorAll<HTMLButtonElement|HTMLInputElement>('.controls button,.controls input').forEach(el=>{el.disabled=!enabled;});
+const enableControls=(enabled:boolean)=>document.querySelectorAll<HTMLButtonElement|HTMLInputElement>('.controls button,.controls input,.mobile-playbar button').forEach(el=>{el.disabled=!enabled;});
 enableControls(false);
 element('#diagnostics').hidden=!inspect;
 element('#inspector-toggle').hidden=!inspect;
@@ -30,6 +30,7 @@ function setFlavor(name:Flavor) {
 function setTool(tool:'grab'|'spoon') {
   squishUntil=0;grab?.cancel();spoon?.cancel();sim.body.release();sim.tool=tool;
   element('#tool-hint').textContent=tool==='spoon'?'在猫咪身上按住，松手挖走一小口。':'按住猫咪拖一拖，松手看它弹回来。';
+  element('#mobile-tool-hint').textContent=tool==='spoon'?'正在用勺子 · 想继续捏？点左边「捏一捏」':'正在捏捏 · 按住猫咪拖动，松手回弹';
   if(world)world.spoon.visible=tool==='spoon';canvas.classList.toggle('spoon',tool==='spoon');
   document.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tool===tool)));
 }
@@ -47,7 +48,8 @@ function reset() {
   element('#pause').textContent='暂停';element('#pause').setAttribute('aria-pressed','false');
 }
 document.querySelectorAll<HTMLButtonElement>('[data-flavor]').forEach(b=>b.addEventListener('click',()=>setFlavor(b.dataset.flavor as Flavor),opts));
-document.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool as 'grab'|'spoon'),opts));
+function returnToCat(){if(window.matchMedia('(max-width:1280px)').matches)window.scrollTo({top:0,behavior:'instant'});}
+document.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.addEventListener('click',()=>{setTool(b.dataset.tool as 'grab'|'spoon');returnToCat();},opts));
 element('#squish').addEventListener('click',()=>{
   if(!world||sim.body.empty)return;
   setTool('grab');sim.pause(false);
@@ -61,9 +63,9 @@ element('#squish').addEventListener('click',()=>{
   if(sim.body.grab){const p=sim.body.grab.anchor;sim.body.moveGrab([p[0],p[1]-.48,p[2]]);squishUntil=sim.time+.46;}
 },opts);
 canvas.addEventListener('pointerdown',()=>{if(squishUntil){sim.body.release();squishUntil=0;}},opts);
-element('#bite').addEventListener('click',()=>{setTool('spoon');spoon?.bite();},opts);
+element('#bite').addEventListener('click',()=>{setTool('spoon');spoon?.bite();returnToCat();},opts);
 element('#firmness').addEventListener('input',sliders,opts);element('#damping').addEventListener('input',sliders,opts);
-element('#nudge').addEventListener('click',()=>sim.nudge(),opts);element('#reset').addEventListener('click',reset,opts);
+element('#nudge').addEventListener('click',()=>sim.nudge(),opts);document.querySelectorAll<HTMLButtonElement>('#reset,#mobile-reset').forEach(b=>b.addEventListener('click',()=>{reset();returnToCat();element('#mobile-tool-hint').textContent='猫咪已复原 · 现在可以按住它继续捏啦';},opts));
 element('#pause').addEventListener('click',()=>{
   grab?.cancel();spoon?.cancel();sim.pause(!sim.paused);element('#pause').textContent=sim.paused?'继续':'暂停';element('#pause').setAttribute('aria-pressed',String(sim.paused));
 },opts);
