@@ -24,7 +24,9 @@ export async function createWorld(canvas:HTMLCanvasElement,sim:Simulation) {
   const renderer=new THREE.WebGPURenderer({canvas,antialias:true,alpha:false});
   await renderer.init();
   if((renderer.backend as {isWebGPUBackend?:boolean}).isWebGPUBackend!==true) {renderer.dispose();throw new Error('A native WebGPU renderer is required.');}
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  const touchQuality=window.matchMedia('(pointer: coarse)').matches;
+  const pixelRatioCap=touchQuality?1:1.5,shadowSize=touchQuality?512:1024;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,pixelRatioCap));
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.VSMShadowMap;
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f1e9df');scene.fog=new THREE.Fog('#f1e9df',10,24);
@@ -33,9 +35,9 @@ export async function createWorld(canvas:HTMLCanvasElement,sim:Simulation) {
   const env=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
   const envTarget=pmrem.fromScene(env,.035);scene.environment=envTarget.texture;scene.environmentIntensity=.7;env.dispose();pmrem.dispose();
   const light=new THREE.DirectionalLight('#fff4db',2.2);light.position.set(-3,7,3);light.castShadow=true;
-  light.shadow.mapSize.set(1024,1024);light.shadow.camera.left=-3;light.shadow.camera.right=3;
+  light.shadow.mapSize.set(shadowSize,shadowSize);light.shadow.camera.left=-3;light.shadow.camera.right=3;
   light.shadow.camera.top=3;light.shadow.camera.bottom=-3;light.shadow.camera.near=.5;light.shadow.camera.far=15;
-  light.shadow.normalBias=.012;light.shadow.bias=-.00015;light.shadow.radius=4;light.shadow.blurSamples=8;scene.add(light);
+  light.shadow.normalBias=.012;light.shadow.bias=-.00015;light.shadow.radius=4;light.shadow.blurSamples=touchQuality?4:8;scene.add(light);
   const fill=new THREE.HemisphereLight('#fff9e7','#b7b9a7',.6);scene.add(fill);
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardNodeMaterial({color:'#ece1d2',roughness:1}));
   ground.rotation.x=-Math.PI/2;ground.position.y=-.006;ground.receiveShadow=true;scene.add(ground);
@@ -167,7 +169,7 @@ export async function createWorld(canvas:HTMLCanvasElement,sim:Simulation) {
     /** Wireframe visibility follows the toggle but never shows an empty cage. */
     set mesh(visible:boolean){showMesh=visible;wire.visible=visible&&!sim.body.empty;},
     get mesh(){return showMesh;},
-    deviceInfo:{backend:'WebGPU',adapter:{vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description},userAgent:navigator.userAgent,dpr:renderer.getPixelRatio(),three:THREE.REVISION},
+    deviceInfo:{backend:'WebGPU',adapter:{vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description},userAgent:navigator.userAgent,dpr:renderer.getPixelRatio(),three:THREE.REVISION,quality:touchQuality?'touch':'desktop',shadowSize},
   };
 }
 export type World=Awaited<ReturnType<typeof createWorld>>;

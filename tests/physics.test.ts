@@ -25,7 +25,7 @@ test('pause, reset, slow motion and background recovery keep their observable co
   assert.deepEqual(s.body.position,before);assert.equal(s.body.grab,null);
   s.reset();s.slow=true;run(s,1);assert.ok(Math.abs(s.time-.25)<.005);
   s.visibility(true);const time=s.time;run(s,20);assert.equal(s.time,time);
-  s.visibility(false);assert.ok(s.advance(20)<=12);
+  s.visibility(false);assert.ok(s.advance(20)<=24);
   s.reset();assert.equal(s.paused,false);assert.equal(s.slow,false);
   assert.deepEqual(s.body.position,s.body.mesh.rest);assert.ok(s.body.velocity.every(v=>v===0));
 });
@@ -57,5 +57,17 @@ test('slider endpoints remain finite and preserve positive tetrahedra under repe
       s.advance(1/60);
       if(i%10===0){const m=s.body.metrics();assert.ok(m.finite&&m.minTetRatio>0,JSON.stringify({firmness,damping,i,...m}));}
     }
+  }
+});
+
+test('10 and 15 fps retain real-time physics and the same rebound as 60 fps',()=>{
+  const reference=new Simulation();reference.nudge();run(reference,2);
+  for(const fps of [10,15]) {
+    const s=new Simulation();s.nudge();
+    for(let i=0;i<fps*2;i++)s.advance(1/fps);
+    assert.ok(Math.abs(s.time-2)<s.stepSize);
+    for(let i=0;i<s.body.position.length;i++)assert.ok(Math.abs(s.body.position[i]-reference.body.position[i])<1e-8);
+    assert.ok(s.alpha>=0&&s.alpha<1.001);
+    assert.ok(s.body.metrics().minTetRatio>0);
   }
 });

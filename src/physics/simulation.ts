@@ -12,9 +12,10 @@ export class Simulation {
   get alpha(){return this.accumulator/this.stepSize;}
   advance(elapsed:number) {
     if(this.paused||this.hidden)return 0;
-    this.accumulator+=Math.min(.05,Math.max(0,elapsed))*(this.slow?.25:1);
+    // Catch up through 10 fps without changing the solver step; cap long stalls to 100 ms.
+    this.accumulator+=Math.min(.1,Math.max(0,elapsed))*(this.slow?.25:1);
     let steps=0;
-    while(this.accumulator>=this.stepSize && steps<12) {
+    while(this.accumulator>=this.stepSize && steps<24) {
       this.body.step(this.stepSize);this.accumulator-=this.stepSize;this.time+=this.stepSize;steps++;
     }
     return steps;
