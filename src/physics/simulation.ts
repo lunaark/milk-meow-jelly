@@ -1,3 +1,4 @@
+import { DEFAULT_FIRMNESS, DEFAULT_DAMPING } from './settings.ts';
 import { SoftBody } from './soft-body.ts';
 export class Simulation {
   readonly body=new SoftBody();
@@ -25,7 +26,7 @@ export class Simulation {
   private stopInput(){this.accumulator=0;this.body.release();this.body.spoon=null;this.body.previous.set(this.body.position);}
   reset(drop=0) {
     this.paused=false;this.slow=false;this.tool='grab';this.time=0;this.accumulator=0;
-    this.body.firmness=.45;this.body.damping=3.04;this.body.reset(drop);
+    this.body.firmness=DEFAULT_FIRMNESS/100;this.body.damping=DEFAULT_DAMPING/100*8;this.body.reset(drop);
   }
   nudge(){if(!this.paused&&!this.hidden)this.body.nudge();}
 }

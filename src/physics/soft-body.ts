@@ -1,3 +1,4 @@
+import { DEFAULT_FIRMNESS, DEFAULT_DAMPING } from './settings.ts';
 import { makeVolumeMesh, repairRemoval, tetVolume, cellCoords, nodeIndex } from './mesh.ts';
 import type { Vec3, VolumeMesh } from './mesh.ts';
 
@@ -32,8 +33,8 @@ export class SoftBody {
   private readonly restOffsets=new Map<number,Vec3>();
   /** Increments whenever the topology changes so bound surfaces know to rebuild. */
   version=0;
-  firmness=.45;
-  damping=3.04;
+  firmness=DEFAULT_FIRMNESS/100;
+  damping=DEFAULT_DAMPING/100*8;
   grab: {weights:[number,number][];target:Vec3;cursor:Vec3;anchor:Vec3} | null=null;
   spoon: Spoon | null=null;
   constructor(mesh=makeVolumeMesh()) {

@@ -1,3 +1,4 @@
+import { DEFAULT_FIRMNESS, DEFAULT_DAMPING } from './physics/settings.ts';
 import './styles.css';
 import { Simulation } from './physics/simulation.ts';
 import { createWorld } from './scene/world.ts';
@@ -28,19 +29,20 @@ function setFlavor(name:Flavor) {
 }
 function setTool(tool:'grab'|'spoon') {
   squishUntil=0;grab?.cancel();spoon?.cancel();sim.body.release();sim.tool=tool;
+  element('#tool-hint').textContent=tool==='spoon'?'在猫咪身上按住，松手挖走一小口。':'按住猫咪拖一拖，松手看它弹回来。';
   if(world)world.spoon.visible=tool==='spoon';canvas.classList.toggle('spoon',tool==='spoon');
   document.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tool===tool)));
 }
 function sliders() {
   const firmness=element<HTMLInputElement>('#firmness'),damping=element<HTMLInputElement>('#damping');
   sim.body.firmness=Number(firmness.value)/100;sim.body.damping=Number(damping.value)/100*8;
-  element('#firmness-value').textContent=sim.body.firmness<.3?'软糯':sim.body.firmness<.7?'柔弹':'弹弹的';
-  element('#damping-value').textContent=sim.body.damping<2?'慢慢晃':sim.body.damping<5?'轻轻收住':'很快停下';
-  for(const el of [firmness,damping])el.style.background=`linear-gradient(to right,#2d3830 ${el.value}%,#d7dcd1 ${el.value}%)`;
+  element('#firmness-value').textContent=firmness.value+' / 100';
+  element('#damping-value').textContent=damping.value+' / 100';
+  for(const el of [firmness,damping])el.style.setProperty('--fill',el.value+'%');
 }
 function reset() {
   grab?.cancel();spoon?.cancel();sim.reset();setFlavor('vanilla');setTool('grab');
-  element<HTMLInputElement>('#firmness').value='45';element<HTMLInputElement>('#damping').value='38';sliders();
+  element<HTMLInputElement>('#firmness').value=String(DEFAULT_FIRMNESS);element<HTMLInputElement>('#damping').value=String(DEFAULT_DAMPING);sliders();
   element<HTMLInputElement>('#slow').checked=false;element<HTMLInputElement>('#mesh').checked=false;if(world)world.mesh=false;
   element('#pause').textContent='暂停';element('#pause').setAttribute('aria-pressed','false');
 }
